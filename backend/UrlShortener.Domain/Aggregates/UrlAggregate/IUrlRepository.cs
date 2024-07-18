@@ -2,5 +2,5 @@ namespace UrlShortener.Domain.Aggregates.UrlAggregate;
 
 public interface IUrlRepository : IRepository<UrlEntity>
 {
-    Task<UrlEntity> Create();
+    public Task<UrlEntity> Get(string shortUrl);
 }

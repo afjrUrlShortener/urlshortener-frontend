@@ -2,10 +2,10 @@ namespace UrlShortener.Domain.Aggregates.UrlAggregate;
 
 public class UrlEntity : IEntity
 {
-    public required Guid Id { get; set; }
+    public Guid Id { get; init; }
+    public DateTimeOffset CreatedAt { get; init; }
+    public DateTimeOffset? DeletedAt { get; set; }
     public required string LongUrl { get; set; }
     public required string ShortUrl { get; set; }
-    public required DateTimeOffset CreatedAt { get; set; }
     public DateTimeOffset? ExpiresAt { get; set; }
-    public DateTimeOffset? DeletedAt { get; set; }
 }
