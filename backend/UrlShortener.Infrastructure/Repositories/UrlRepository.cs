@@ -42,19 +42,21 @@ public class UrlRepository : IUrlRepository
         return totalChanges == 1;
     }
 
-    public Task<UrlEntity?> Get(string shortUrl) => _dbContext.Urls.FirstOrDefaultAsync(
-        x => x.ShortUrl == shortUrl
-             && x.DeletedAt == null
-             && (x.ExpiresAt == null || x.ExpiresAt.Value.UtcDateTime > DateTimeOffset.UtcNow.UtcDateTime)
+    public Task<UrlEntity?> GetByLongUrl(string longUrl) => _dbContext.Urls.FirstOrDefaultAsync(
+        x => x.LongUrl == longUrl && x.DeletedAt == null
+    );
+
+    public Task<UrlEntity?> GetByShortUrl(string shortUrl) => _dbContext.Urls.FirstOrDefaultAsync(
+        x => x.ShortUrl == shortUrl && x.DeletedAt == null
     );
 
     public async Task<bool> Delete(string shortUrl)
     {
-        var entity = await Get(shortUrl);
+        var entity = await GetByShortUrl(shortUrl);
         if (entity is null)
             return false;
 
-        entity.DeletedAt = DateTimeOffset.UtcNow;
+        entity.DeletedAt = DateTime.UtcNow;
         var updatedEntity = await Update(entity);
         return updatedEntity is not null;
     }
