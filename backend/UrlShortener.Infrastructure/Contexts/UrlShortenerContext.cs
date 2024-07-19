@@ -16,6 +16,7 @@ public class UrlShortenerContext : DbContext
             builder.ToTable(nameof(Urls));
             builder.HasKey(x => x.Id);
             builder.HasIndex(x => new { x.LongUrl, x.ShortUrl }).IsUnique();
+            builder.HasIndex(x => x.LongUrl).IsUnique();
             builder.HasIndex(x => x.ShortUrl).IsUnique();
             builder.Property(x => x.Id).HasDefaultValueSql("gen_random_uuid()");
             builder.Property(x => x.LongUrl).IsRequired();
