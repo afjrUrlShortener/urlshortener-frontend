@@ -1,3 +1,9 @@
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using UrlShortener.Api.Aggregates.ShortenerAggregate;
+using UrlShortener.Domain.Aggregates.UrlAggregate;
+using UrlShortener.Infrastructure.Contexts;
+using UrlShortener.Infrastructure.Repositories;
+
 namespace UrlShortener.Api;
 
 public class Program
@@ -6,20 +12,20 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
+        var dbConnection = builder.Configuration.GetValue<string>("DB_CONNECTION_STRING");
+        builder.Services.AddNpgsql<UrlShortenerContext>(dbConnection);
+        builder.Services.TryAddScoped<IUrlRepository, UrlRepository>();
+        builder.Services.TryAddScoped<IShortenerService, ShortenerService>();
+
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
         var app = builder.Build();
-        if (app.Environment.IsDevelopment())
-        {
-            app.UseSwagger();
-            app.UseSwaggerUI();
-        }
-
+        app.UseSwagger();
+        app.UseSwaggerUI();
         app.UseAuthorization();
         app.MapControllers();
-
         app.Run();
     }
 }

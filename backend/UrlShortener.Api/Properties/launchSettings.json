@@ -8,7 +8,8 @@
       "launchUrl": "swagger",
       "applicationUrl": "http://localhost:5212",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "DB_CONNECTION_STRING": "Server=localhost;Port=5432;Database=postgres;User Id=postgres;Password=postgres;"
       }
     },
     "staging": {
@@ -18,7 +19,8 @@
       "launchUrl": "swagger",
       "applicationUrl": "http://localhost:5212",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Staging"
+        "ASPNETCORE_ENVIRONMENT": "Staging",
+        "DB_CONNECTION_STRING": "Server=CHANGE;Port=CHANGE;Database=CHANGE;User Id=CHANGE;Password=CHANGE;"
       }
     },
     "production": {
@@ -28,7 +30,8 @@
       "launchUrl": "swagger",
       "applicationUrl": "http://localhost:5212",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Production"
+        "ASPNETCORE_ENVIRONMENT": "Production",
+        "DB_CONNECTION_STRING": "Server=CHANGE;Port=CHANGE;Database=CHANGE;User Id=CHANGE;Password=CHANGE;"
       }
     }
   }
