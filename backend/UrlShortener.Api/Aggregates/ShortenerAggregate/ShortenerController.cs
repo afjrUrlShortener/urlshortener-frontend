@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using UrlShortener.Domain.Constants;
 
 namespace UrlShortener.Api.Aggregates.ShortenerAggregate;
 
@@ -6,29 +7,41 @@ namespace UrlShortener.Api.Aggregates.ShortenerAggregate;
 [Route("api/v1/[controller]")]
 public class ShortenerController : ControllerBase
 {
-    private readonly ILogger<ShortenerController> _logger;
+    private readonly IShortenerService _shortenerService;
 
-    public ShortenerController(ILogger<ShortenerController> logger)
+    public ShortenerController(IShortenerService shortenerService)
     {
-        _logger = logger;
+        _shortenerService = shortenerService;
     }
-
-    public record CreateShortenedUrlRequest(string Url);
-
-    public record CreateShortenedUrlResponse(string Url);
 
     [HttpPost]
     [ProducesResponseType<CreateShortenedUrlResponse>(StatusCodes.Status201Created)]
-    public Task<IActionResult> CreateShortenedUrl([FromBody] CreateShortenedUrlRequest request)
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> CreateShortenedUrl([FromBody] CreateShortenedUrlRequest request)
     {
-        throw new NotImplementedException();
+        if (string.IsNullOrWhiteSpace(request.Url))
+            return BadRequest($"{nameof(request.Url)} must not be null or empty");
+
+        if (!request.Url.StartsWith("https://") || !request.Url.StartsWith("http://"))
+            return BadRequest($"{nameof(request.Url)} must start with https:// or http://");
+
+        var shortUrl = await _shortenerService.CreateShortUrl(request.Url, request.ExpiresAt?.UtcDateTime);
+        return Created(string.Empty, new CreateShortenedUrlResponse($"https://localhost/{shortUrl}"));
     }
 
-    public record RedirectToShortenedUrlRequest(string Url);
-
-    [HttpGet]
-    public Task<IActionResult> RedirectToShortenedUrl([FromBody] RedirectToShortenedUrlRequest request)
+    [HttpGet("{shortUrl}")]
+    [ProducesResponseType(StatusCodes.Status308PermanentRedirect)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> RedirectToLongUrl([FromRoute] string shortUrl)
     {
-        throw new NotImplementedException();
+        if (string.IsNullOrWhiteSpace(shortUrl))
+            return BadRequest();
+
+        var longUrl = await _shortenerService.GetLongUrl(shortUrl);
+        if (string.IsNullOrWhiteSpace(longUrl))
+            return NotFound();
+
+        return RedirectPermanentPreserveMethod(longUrl);
     }
 }
