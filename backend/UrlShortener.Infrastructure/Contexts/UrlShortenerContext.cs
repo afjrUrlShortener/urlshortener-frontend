@@ -7,6 +7,10 @@ public class UrlShortenerContext : DbContext
 {
     public DbSet<UrlEntity> Urls { get; set; }
 
+    public UrlShortenerContext(DbContextOptions<UrlShortenerContext> dbContextOptions) : base(dbContextOptions)
+    {
+    }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
