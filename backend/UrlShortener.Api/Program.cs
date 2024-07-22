@@ -14,6 +14,12 @@ public class Program
 
         var dbConnection = builder.Configuration.GetValue<string>("DB_CONNECTION_STRING");
         builder.Services.AddNpgsql<UrlShortenerContext>(dbConnection);
+
+        builder.Services.Configure<ShortenerOptions>(options =>
+        {
+            options.ShortenerDomain = builder.Configuration.GetValue<string>("SHORTENER_DOMAIN")!;
+        });
+
         builder.Services.TryAddScoped<IUrlRepository, UrlRepository>();
         builder.Services.TryAddScoped<IShortenerService, ShortenerService>();
 

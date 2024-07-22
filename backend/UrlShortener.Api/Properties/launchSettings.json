@@ -4,34 +4,25 @@
     "development": {
       "commandName": "Project",
       "dotnetRunMessages": true,
-      "launchBrowser": false,
-      "launchUrl": "swagger",
       "applicationUrl": "http://localhost:5212",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "DB_CONNECTION_STRING": "Server=localhost;Port=5432;Database=postgres;User Id=postgres;Password=postgres;"
+        "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
     "staging": {
       "commandName": "Project",
       "dotnetRunMessages": true,
-      "launchBrowser": false,
-      "launchUrl": "swagger",
-      "applicationUrl": "http://localhost:5212",
+      "applicationUrl": "https://localhost:5212",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Staging",
-        "DB_CONNECTION_STRING": "Server=CHANGE;Port=CHANGE;Database=CHANGE;User Id=CHANGE;Password=CHANGE;"
+        "ASPNETCORE_ENVIRONMENT": "Staging"
       }
     },
     "production": {
       "commandName": "Project",
       "dotnetRunMessages": true,
-      "launchBrowser": false,
-      "launchUrl": "swagger",
-      "applicationUrl": "http://localhost:5212",
+      "applicationUrl": "https://localhost:5212",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Production",
-        "DB_CONNECTION_STRING": "Server=CHANGE;Port=CHANGE;Database=CHANGE;User Id=CHANGE;Password=CHANGE;"
+        "ASPNETCORE_ENVIRONMENT": "Production"
       }
     }
   }
