@@ -1,5 +1,5 @@
 namespace UrlShortener.Api.Aggregates.ShortenerAggregate;
 
-public record CreateShortenedUrlRequest(string Url, DateTimeOffset? ExpiresAt);
+public record CreateShortenedUrlRequest(string Url, DateTimeOffset? ExpiresAt = null);
 
-public record CreateShortenedUrlResponse(string Url);
+public record CreateShortenedUrlResponse(string ShortUrl);

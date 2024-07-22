@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Options;
 using UrlShortener.Domain.Aggregates.UrlAggregate;
 using UrlShortener.Domain.Constants;
 
@@ -8,10 +9,13 @@ public class ShortenerService : IShortenerService
     private readonly ILogger<ShortenerService> _logger;
     private readonly IUrlRepository _urlRepository;
 
-    public ShortenerService(IUrlRepository urlRepository, ILogger<ShortenerService> logger)
+    public ShortenerService(
+        ILogger<ShortenerService> logger,
+        IUrlRepository urlRepository
+    )
     {
-        _urlRepository = urlRepository;
         _logger = logger;
+        _urlRepository = urlRepository;
     }
 
     private string CreateRandomShortUrl(Random random) => new(random.GetItems(ShortenerConstants.CharacterSet, 6));
@@ -54,7 +58,16 @@ public class ShortenerService : IShortenerService
             ShortUrl = shortUrl,
             ExpiresAt = expiresAt ?? renewedTime
         });
-        return createdUrlEntity?.ShortUrl;
+        if (createdUrlEntity is null)
+        {
+            _logger.LogError(
+                "Failed to create shortened url {errObj}",
+                new { LongUrl = longUrl, ExpiresAt = expiresAt }
+            );
+            return null;
+        }
+
+        return createdUrlEntity.ShortUrl;
     }
 
     public async Task<string?> GetLongUrl(string shortUrl)
