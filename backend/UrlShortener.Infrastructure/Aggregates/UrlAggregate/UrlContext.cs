@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using UrlShortener.Domain.Aggregates.UrlAggregate;
 
-namespace UrlShortener.Infrastructure.Contexts;
+namespace UrlShortener.Infrastructure.Aggregates.UrlAggregate;
 
 public class UrlContext : DbContext
 {

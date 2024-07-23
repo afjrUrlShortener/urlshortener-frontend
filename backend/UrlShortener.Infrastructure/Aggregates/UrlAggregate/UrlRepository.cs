@@ -1,8 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using UrlShortener.Domain.Aggregates.UrlAggregate;
-using UrlShortener.Infrastructure.Contexts;
 
-namespace UrlShortener.Infrastructure.Repositories;
+namespace UrlShortener.Infrastructure.Aggregates.UrlAggregate;
 
 public class UrlRepository : IUrlRepository
 {

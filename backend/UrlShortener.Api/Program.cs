@@ -1,8 +1,7 @@
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using UrlShortener.Api.Aggregates.ShortenerAggregate;
 using UrlShortener.Domain.Aggregates.UrlAggregate;
-using UrlShortener.Infrastructure.Contexts;
-using UrlShortener.Infrastructure.Repositories;
+using UrlShortener.Infrastructure.Aggregates.UrlAggregate;
 
 namespace UrlShortener.Api;
 

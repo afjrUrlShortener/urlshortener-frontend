@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using UrlShortener.Api;
 using UrlShortener.Api.Aggregates.ShortenerAggregate;
-using UrlShortener.Infrastructure.Contexts;
+using UrlShortener.Infrastructure.Aggregates.UrlAggregate;
 
 namespace UrlShortener.Tests.Aggregates.ShortenerAggregate;
 

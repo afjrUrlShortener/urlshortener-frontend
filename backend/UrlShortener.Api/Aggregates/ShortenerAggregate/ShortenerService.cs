@@ -1,5 +1,5 @@
+using UrlShortener.Domain.Aggregates.ShortenerAggregate;
 using UrlShortener.Domain.Aggregates.UrlAggregate;
-using UrlShortener.Domain.Constants;
 
 namespace UrlShortener.Api.Aggregates.ShortenerAggregate;
 

@@ -1,4 +1,4 @@
-namespace UrlShortener.Domain.Constants;
+namespace UrlShortener.Domain.Aggregates.ShortenerAggregate;
 
 public readonly struct ShortenerConstants
 {
