@@ -1,4 +1,3 @@
-using Microsoft.Extensions.Options;
 using UrlShortener.Domain.Aggregates.UrlAggregate;
 using UrlShortener.Domain.Constants;
 
@@ -18,7 +17,10 @@ public class ShortenerService : IShortenerService
         _urlRepository = urlRepository;
     }
 
-    private string CreateRandomShortUrl(Random random) => new(random.GetItems(ShortenerConstants.CharacterSet, 6));
+    private string CreateRandomShortUrl(Random random)
+    {
+        return new string(random.GetItems(ShortenerConstants.CharacterSet, ShortenerConstants.ShortUrlMaxSize));
+    }
 
     public async Task<string?> CreateShortUrl(string longUrl, DateTime? expiresAt = null)
     {
