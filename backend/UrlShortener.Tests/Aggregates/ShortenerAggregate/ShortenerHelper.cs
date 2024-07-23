@@ -47,4 +47,9 @@ internal static class ShortenerHelper
     {
         return response.Content.ReadFromJsonAsync<CreateShortenedUrlResponse>();
     }
+
+    internal static Task<HttpResponseMessage> GetRedirectResponse(HttpClient httpClient, string? shortUrl)
+    {
+        return httpClient.GetAsync($"api/v1/shortener/{shortUrl}");
+    }
 }

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using UrlShortener.Domain.Aggregates.ShortenerAggregate;
 
 namespace UrlShortener.Api.Aggregates.ShortenerAggregate;
 
@@ -46,7 +47,13 @@ public class ShortenerController : ControllerBase
     public async Task<IActionResult> RedirectToLongUrl([FromRoute] string shortUrl)
     {
         if (string.IsNullOrWhiteSpace(shortUrl))
-            return BadRequest();
+            return BadRequest("Short url must not be null or empty");
+
+        if (shortUrl.Length > ShortenerConstants.ShortUrlMaxSize)
+            return BadRequest($"Short url length must not exceed {ShortenerConstants.ShortUrlMaxSize}");
+
+        if (shortUrl.Any(x => !ShortenerConstants.CharacterSet.Contains(x)))
+            return BadRequest("Short url not composed by valid characters");
 
         var longUrl = await _shortenerService.GetLongUrl(shortUrl);
         if (string.IsNullOrWhiteSpace(longUrl))
