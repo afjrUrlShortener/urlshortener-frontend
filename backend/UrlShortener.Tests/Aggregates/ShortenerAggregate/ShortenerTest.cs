@@ -9,7 +9,6 @@ namespace UrlShortener.Tests.Aggregates.ShortenerAggregate;
 public class ShortenerTest : IClassFixture<CoreFixture>
 {
     private readonly CoreFixture _fixture;
-    private const string TestUrl = "https://www.google.com.br";
 
     public ShortenerTest(CoreFixture coreFixture)
     {
@@ -25,35 +24,40 @@ public class ShortenerTest : IClassFixture<CoreFixture>
             var shortenerOptions = services.GetRequiredService<IOptions<ShortenerOptions>>().Value;
 
             // act
-            var (response, content) = await ShortenerHelper.CreateShortUrl(httpClient, TestUrl);
+            var (response, content) = await ShortenerHelper.CreateShortUrl(httpClient, "https://www.google.com.br");
 
             // assert
             Assert.NotNull(response);
             Assert.NotNull(content);
             Assert.Equal(HttpStatusCode.Created, response.StatusCode);
             Assert.False(string.IsNullOrWhiteSpace(content.ShortUrl));
-            Assert.True(response.Headers.TryGetValues(HeaderNames.Location, out var redirectToEnum));
-            var redirectTo = redirectToEnum.SingleOrDefault();
-            Assert.False(string.IsNullOrWhiteSpace(redirectTo));
-            Assert.StartsWith(shortenerOptions.ShortenerDomain, redirectTo);
+            Assert.True(response.Headers.TryGetValues(HeaderNames.Location, out var headerLocationValue));
+            var urlToRedirect = headerLocationValue.SingleOrDefault();
+            Assert.False(string.IsNullOrWhiteSpace(urlToRedirect));
+            Assert.StartsWith(shortenerOptions.ShortenerDomain, urlToRedirect);
         });
     }
 
-    [Fact]
-    public Task CreateShortUrl_ShouldRedirectToLongUrl()
+    [Theory]
+    [InlineData("https://www.google.com.br")]
+    [InlineData("https://www.amazon.com.br")]
+    [InlineData("https://www.microsoft.com")]
+    public Task CreateShortUrl_ShouldRedirectToLongUrl(string url)
     {
         // arrange
         return ShortenerHelper.CreateWebApiAndExecute(_fixture.SqlDatabase, async (_, httpClient) =>
         {
-            var (_, content) = await ShortenerHelper.CreateShortUrl(httpClient, TestUrl);
+            var (_, content) = await ShortenerHelper.CreateShortUrl(httpClient, url);
 
             // act
             using var redirectResponse = await httpClient.GetAsync($"api/v1/shortener/{content?.ShortUrl}");
 
             // assert
             Assert.Equal(HttpStatusCode.PermanentRedirect, redirectResponse.StatusCode);
-            Assert.True(redirectResponse.Headers.TryGetValues(HeaderNames.Location, out var redirectTo));
-            Assert.False(string.IsNullOrWhiteSpace(redirectTo.SingleOrDefault()));
+            Assert.True(redirectResponse.Headers.TryGetValues(HeaderNames.Location, out var headerLocationValue));
+            var urlToRedirect = headerLocationValue.SingleOrDefault();
+            Assert.False(string.IsNullOrWhiteSpace(urlToRedirect));
+            Assert.StartsWith(url, urlToRedirect);
         });
     }
 

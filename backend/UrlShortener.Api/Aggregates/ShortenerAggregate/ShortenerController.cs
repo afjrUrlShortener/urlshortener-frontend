@@ -25,17 +25,18 @@ public class ShortenerController : ControllerBase
         if (string.IsNullOrWhiteSpace(request.Url))
             return BadRequest($"{nameof(request.Url)} must not be null or empty");
 
-        if (!request.Url.StartsWith("https://") && !request.Url.StartsWith("http://"))
-            return BadRequest($"{nameof(request.Url)} must start with https:// or http://");
+        if (!Uri.TryCreate(request.Url, UriKind.RelativeOrAbsolute, out var validatedUrl))
+            return BadRequest($"{nameof(request.Url)} must be a valid URL");
 
-        var shortUrl = await _shortenerService.CreateShortUrl(request.Url, request.ExpiresAt?.UtcDateTime);
+        if (!validatedUrl.IsWellFormedOriginalString() || !Uri.CheckSchemeName(validatedUrl.Scheme))
+            return BadRequest($"{nameof(request.Url)} must be a valid URL");
+
+        var longUrl = validatedUrl.ToString();
+        var shortUrl = await _shortenerService.CreateShortUrl(longUrl, request.ExpiresAt?.UtcDateTime);
         if (string.IsNullOrWhiteSpace(shortUrl))
             return Problem("Failed to create short url");
 
-        return Created(
-            $"{_options.ShortenerDomain}/{shortUrl}",
-            new CreateShortenedUrlResponse(shortUrl)
-        );
+        return Created($"{_options.ShortenerDomain}/{shortUrl}", new CreateShortenedUrlResponse(shortUrl));
     }
 
     [HttpGet("{shortUrl}")]
