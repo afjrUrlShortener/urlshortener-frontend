@@ -15,8 +15,10 @@ public class ShortenerTest : IClassFixture<CoreFixture>
         _fixture = coreFixture;
     }
 
-    [Fact]
-    public Task CreateShortUrl_ShouldReturnCreatedStatus_AndContainShortenerDomainInHeader()
+    [Theory]
+    [InlineData("https://www.google.com.br")]
+    [InlineData("ftp://us-east.s3.amazon/bucket/1/123456")]
+    public Task CreateShortUrl_ShouldReturnCreatedStatus_AndLocationInHeader_ShouldStartWithShortenerDomain(string url)
     {
         // arrange
         return ShortenerHelper.CreateWebApiAndExecute(_fixture.SqlDatabase, async (services, httpClient) =>
@@ -24,12 +26,12 @@ public class ShortenerTest : IClassFixture<CoreFixture>
             var shortenerOptions = services.GetRequiredService<IOptions<ShortenerOptions>>().Value;
 
             // act
-            var (response, content) = await ShortenerHelper.CreateShortUrl(httpClient, "https://www.google.com.br");
+            var (response, content) = await ShortenerHelper.CreateShortUrl(httpClient, url);
 
             // assert
             Assert.NotNull(response);
-            Assert.NotNull(content);
             Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+            Assert.NotNull(content);
             Assert.False(string.IsNullOrWhiteSpace(content.ShortUrl));
             Assert.True(response.Headers.TryGetValues(HeaderNames.Location, out var headerLocationValue));
             var urlToRedirect = headerLocationValue.SingleOrDefault();
@@ -40,8 +42,9 @@ public class ShortenerTest : IClassFixture<CoreFixture>
 
     [Theory]
     [InlineData("https://www.google.com.br")]
-    [InlineData("https://www.amazon.com.br")]
-    [InlineData("https://www.microsoft.com")]
+    [InlineData("https://www.amazon.com.br/products/computers?cpu=amd&graphicscard=nvidia")]
+    [InlineData("http://www.microsoft.com")]
+    [InlineData("ftp://us-east.s3.amazon/bucket/1/123456")]
     public Task CreateShortUrl_ShouldRedirectToLongUrl(string url)
     {
         // arrange
