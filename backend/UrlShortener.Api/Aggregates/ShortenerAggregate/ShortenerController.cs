@@ -25,7 +25,7 @@ public class ShortenerController : ControllerBase
         if (string.IsNullOrWhiteSpace(request.Url))
             return BadRequest($"{nameof(request.Url)} must not be null or empty");
 
-        if (!Uri.TryCreate(request.Url, UriKind.RelativeOrAbsolute, out var validatedUrl))
+        if (!Uri.TryCreate(request.Url, UriKind.Absolute, out var validatedUrl))
             return BadRequest($"{nameof(request.Url)} must be a valid URL");
 
         if (!validatedUrl.IsWellFormedOriginalString() || !Uri.CheckSchemeName(validatedUrl.Scheme))

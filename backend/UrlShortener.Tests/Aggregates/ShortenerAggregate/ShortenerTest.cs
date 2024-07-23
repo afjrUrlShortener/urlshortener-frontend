@@ -26,7 +26,8 @@ public class ShortenerTest : IClassFixture<CoreFixture>
             var shortenerOptions = services.GetRequiredService<IOptions<ShortenerOptions>>().Value;
 
             // act
-            var (response, content) = await ShortenerHelper.CreateShortUrl(httpClient, url);
+            using var response = await ShortenerHelper.CreateShortUrl(httpClient, url);
+            var content = await ShortenerHelper.ReadFromShortUrlResponse(response);
 
             // assert
             Assert.NotNull(response);
@@ -50,7 +51,8 @@ public class ShortenerTest : IClassFixture<CoreFixture>
         // arrange
         return ShortenerHelper.CreateWebApiAndExecute(_fixture.SqlDatabase, async (_, httpClient) =>
         {
-            var (_, content) = await ShortenerHelper.CreateShortUrl(httpClient, url);
+            using var response = await ShortenerHelper.CreateShortUrl(httpClient, url);
+            var content = await ShortenerHelper.ReadFromShortUrlResponse(response);
 
             // act
             using var redirectResponse = await httpClient.GetAsync($"api/v1/shortener/{content?.ShortUrl}");
@@ -61,6 +63,28 @@ public class ShortenerTest : IClassFixture<CoreFixture>
             var urlToRedirect = headerLocationValue.SingleOrDefault();
             Assert.False(string.IsNullOrWhiteSpace(urlToRedirect));
             Assert.StartsWith(url, urlToRedirect);
+        });
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("    ")]
+    [InlineData("www.google.com.br")]
+    [InlineData(".google.com.br")]
+    [InlineData("google.com.br")]
+    [InlineData("/www.amazon.com.br/products/computers?cpu=amd")]
+    [InlineData("://www.amazon.com.br/products/computers?cpu=amd&graphicscard=nvidia")]
+    [InlineData(":/www.amazon.com.br/products/computers?cpu=amd&graphicscard=nvidia")]
+    public Task CreateShortUrl_ShouldReturnBadRequest(string url)
+    {
+        // arrange
+        return ShortenerHelper.CreateWebApiAndExecute(_fixture.SqlDatabase, async (_, httpClient) =>
+        {
+            // act
+            using var response = await ShortenerHelper.CreateShortUrl(httpClient, url);
+
+            // assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         });
     }
 

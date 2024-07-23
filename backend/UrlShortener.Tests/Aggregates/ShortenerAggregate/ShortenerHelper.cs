@@ -38,13 +38,13 @@ internal static class ShortenerHelper
         await function(webApplication.Services, httpClient);
     }
 
-    internal static async Task<(HttpResponseMessage?, CreateShortenedUrlResponse?)> CreateShortUrl(
-        HttpClient httpClient,
-        string longUrl
-    )
+    internal static Task<HttpResponseMessage> CreateShortUrl(HttpClient httpClient, string longUrl)
     {
-        var response = await httpClient.PostAsJsonAsync("/api/v1/shortener", new CreateShortenedUrlRequest(longUrl));
-        var content = await response.Content.ReadFromJsonAsync<CreateShortenedUrlResponse>();
-        return (response, content);
+        return httpClient.PostAsJsonAsync("/api/v1/shortener", new CreateShortenedUrlRequest(longUrl));
+    }
+
+    internal static Task<CreateShortenedUrlResponse?> ReadFromShortUrlResponse(HttpResponseMessage response)
+    {
+        return response.Content.ReadFromJsonAsync<CreateShortenedUrlResponse>();
     }
 }
