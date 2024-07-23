@@ -13,7 +13,7 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
         var dbConnection = builder.Configuration.GetValue<string>("DB_CONNECTION_STRING");
-        builder.Services.AddNpgsql<UrlShortenerContext>(dbConnection);
+        builder.Services.AddNpgsql<UrlContext>(dbConnection);
 
         builder.Services.Configure<ShortenerOptions>(options =>
         {

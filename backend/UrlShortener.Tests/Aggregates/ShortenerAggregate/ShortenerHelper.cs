@@ -10,9 +10,12 @@ using UrlShortener.Infrastructure.Contexts;
 
 namespace UrlShortener.Tests.Aggregates.ShortenerAggregate;
 
-internal static class UrlShortenerHelper
+internal static class ShortenerHelper
 {
-    internal static async Task CreateWebApiAndExecute(IContainer sqlDatabase, Func<HttpClient, Task> function)
+    internal static async Task CreateWebApiAndExecute(
+        IContainer sqlDatabase,
+        Func<IServiceProvider, HttpClient, Task> function
+    )
     {
         await using var webApplication = new WebApplicationFactory<Program>()
             .WithWebHostBuilder(x =>
@@ -25,13 +28,14 @@ internal static class UrlShortenerHelper
                 );
                 x.ConfigureServices(collection =>
                 {
-                    var services = collection.BuildServiceProvider();
-                    var dbContext = services.GetRequiredService<UrlShortenerContext>();
+                    using var serviceProvider = collection.BuildServiceProvider();
+                    using var dbContext = serviceProvider.GetRequiredService<UrlContext>();
                     dbContext.Database.EnsureCreated();
                 });
             });
+
         using var httpClient = webApplication.CreateDefaultClient();
-        await function(httpClient);
+        await function(webApplication.Services, httpClient);
     }
 
     internal static async Task<(HttpResponseMessage?, CreateShortenedUrlResponse?)> CreateShortUrl(

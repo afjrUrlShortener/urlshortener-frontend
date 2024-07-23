@@ -3,11 +3,11 @@ using UrlShortener.Domain.Aggregates.UrlAggregate;
 
 namespace UrlShortener.Infrastructure.Contexts;
 
-public class UrlShortenerContext : DbContext
+public class UrlContext : DbContext
 {
     public DbSet<UrlEntity> Urls { get; set; }
 
-    public UrlShortenerContext(DbContextOptions<UrlShortenerContext> dbContextOptions) : base(dbContextOptions)
+    public UrlContext(DbContextOptions<UrlContext> dbContextOptions) : base(dbContextOptions)
     {
     }
 
