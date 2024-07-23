@@ -17,9 +17,11 @@ public class ShortenerTest : IClassFixture<CoreFixture>
         _fixture = coreFixture;
     }
 
+    #region Create Short Url
+
     [Theory]
-    [InlineData("https://www.google.com.br")]
-    [InlineData("ftp://us-east.s3.amazon/bucket/1/123456")]
+    [InlineData("https://www.url.com.br")]
+    [InlineData("ftp://us-east.url/bucket/1/123456")]
     public Task CreateShortUrl_ShouldReturnCreatedStatus_AndLocationInHeader_ShouldStartWithShortenerDomain(string url)
     {
         // arrange
@@ -44,10 +46,36 @@ public class ShortenerTest : IClassFixture<CoreFixture>
     }
 
     [Theory]
-    [InlineData("https://www.google.com.br")]
-    [InlineData("https://www.amazon.com.br/products/computers?cpu=amd&graphicscard=nvidia")]
-    [InlineData("http://www.microsoft.com")]
-    [InlineData("ftp://us-east.s3.amazon/bucket/1/123456")]
+    [InlineData("")]
+    [InlineData("    ")]
+    [InlineData("www.url.com.br")]
+    [InlineData(".url.com.br")]
+    [InlineData("url.com.br")]
+    [InlineData("/www.url.com.br/products/computers?cpu=processor")]
+    [InlineData("://www.url.com.br/products/computers?cpu=processor&priceIsGreaterThan=1000")]
+    [InlineData(":/www.url.com.br/products/computers?cpu=processor&priceIsGreaterThan=3000")]
+    public Task CreateShortUrl_ShouldReturnBadRequest(string url)
+    {
+        // arrange
+        return ShortenerHelper.CreateWebApiAndExecute(_fixture.SqlDatabase, async (_, httpClient) =>
+        {
+            // act
+            using var response = await ShortenerHelper.CreateShortUrl(httpClient, url);
+
+            // assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        });
+    }
+
+    #endregion
+
+    #region Access Short Url
+
+    [Theory]
+    [InlineData("https://www.url.com.br")]
+    [InlineData("https://www.url.com.br/products/computers?cpu=processor&priceIsGreaterThan=4000")]
+    [InlineData("http://www.url.com")]
+    [InlineData("ftp://us-east.url/bucket/1/123456")]
     public Task AccessShortUrl_ShouldRedirectToLongUrl(string url)
     {
         // arrange
@@ -68,33 +96,12 @@ public class ShortenerTest : IClassFixture<CoreFixture>
         });
     }
 
-    [Theory]
-    [InlineData("")]
-    [InlineData("    ")]
-    [InlineData("www.google.com.br")]
-    [InlineData(".google.com.br")]
-    [InlineData("google.com.br")]
-    [InlineData("/www.amazon.com.br/products/computers?cpu=amd")]
-    [InlineData("://www.amazon.com.br/products/computers?cpu=amd&graphicscard=nvidia")]
-    [InlineData(":/www.amazon.com.br/products/computers?cpu=amd&graphicscard=nvidia")]
-    public Task CreateShortUrl_ShouldReturnBadRequest(string url)
-    {
-        // arrange
-        return ShortenerHelper.CreateWebApiAndExecute(_fixture.SqlDatabase, async (_, httpClient) =>
-        {
-            // act
-            using var response = await ShortenerHelper.CreateShortUrl(httpClient, url);
-
-            // assert
-            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-        });
-    }
 
     [Theory]
-    [InlineData("https://www.bing.com.br")]
-    [InlineData("https://www.mercadolivre.com.br/products/computers?cpu=amd&graphicscard=nvidia")]
-    [InlineData("http://www.uber.com")]
-    [InlineData("ftp://br-south.s3.amazon/bucket/5/332")]
+    [InlineData("https://www.uurl.com.br")]
+    [InlineData("https://www.yoururl.com.br/products/computers?cpu=processor&priceIsGreaterThan=1250")]
+    [InlineData("http://www.myurl.com")]
+    [InlineData("ftp://br-south.superurl/bucket/5/332")]
     public Task AccessShortUrl_ShouldReturnNotFound(string url)
     {
         // arrange
@@ -177,6 +184,8 @@ public class ShortenerTest : IClassFixture<CoreFixture>
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         });
     }
+
+    #endregion
 
     //TODO: Add more tests
 }
