@@ -1,0 +1,6 @@
+services:
+  sql-database:
+  nosql-database:
+  cache:
+  backend:
+  frontend:
