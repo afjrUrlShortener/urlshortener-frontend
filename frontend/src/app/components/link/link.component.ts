@@ -8,15 +8,19 @@ import { TIconName } from '../../types/common.type';
   standalone: true,
   imports: [RouterLink, IconComponent],
   template: `
-    <a class="flex items-center justify-evenly" [routerLink]="link">
-      @if (text && iconName) {
-        <span class="font-medium">{{ text }}</span>
-        <app-icon [name]="iconName" />
-      } @else if (text) {
-        <span class="font-medium">{{ text }}</span>
-      } @else if (iconName) {
-        <app-icon [name]="iconName" />
-      }
+    <a class="group flex flex-col" [routerLink]="link">
+      <div class="flex items-center justify-center">
+        @if (text && iconName) {
+          <span class="font-medium">{{ text }}</span>
+          <app-icon class="ml-2 mt-1" [name]="iconName" size="xsm" />
+        } @else if (text) {
+          <span class="font-medium">{{ text }}</span>
+        } @else if (iconName) {
+          <app-icon [name]="iconName" />
+        }
+      </div>
+      <div
+        class="mt-2 w-0 rounded transition-all duration-300 group-hover:w-full group-hover:outline group-hover:outline-1"></div>
     </a>
   `,
 })

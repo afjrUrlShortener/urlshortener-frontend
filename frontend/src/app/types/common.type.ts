@@ -4,5 +4,5 @@ export type TIconName =
   | 'home'
   | 'bars-4'
   | 'hand-raised'
-  | 'arrow-right'
+  | 'chevron-down'
   | 'link';
