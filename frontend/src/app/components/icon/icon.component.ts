@@ -1,6 +1,12 @@
 import { Component, Input } from '@angular/core';
-import { TIconName, TSize } from '../../types/common.type';
 import { NgClass } from '@angular/common';
+import { TColor, TIconName, TSize } from '../../types/common.type';
+
+export type TIconProps = {
+  name: TIconName;
+  size: TSize;
+  color: TColor;
+};
 
 @Component({
   selector: 'app-icon',
@@ -9,17 +15,20 @@ import { NgClass } from '@angular/common';
   template: `
     <svg
       [ngClass]="{
-        'size-3': size === 'xsm',
-        'size-6': size === 'sm',
-        'size-12': size === 'md',
-        'size-24': size === 'lg',
-        'size-48': size === 'xlg',
+        'size-3': props.size === 'xsm',
+        'size-6': props.size === 'sm',
+        'size-12': props.size === 'md',
+        'size-24': props.size === 'lg',
+        'size-48': props.size === 'xlg',
+        'stroke-primary': props.color === 'primary',
+        'stroke-secondary': props.color === 'secondary',
+        'stroke-tertiary': props.color === 'tertiary',
       }"
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"
       stroke-width="1.5">
-      @switch (name) {
+      @switch (props.name) {
         @case ('home') {
           <path
             stroke-linecap="round"
@@ -50,11 +59,16 @@ import { NgClass } from '@angular/common';
             stroke-linejoin="round"
             d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244" />
         }
+        @default {
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M4.745 3A23.933 23.933 0 0 0 3 12c0 3.183.62 6.22 1.745 9M19.5 3c.967 2.78 1.5 5.817 1.5 9s-.533 6.22-1.5 9M8.25 8.885l1.444-.89a.75.75 0 0 1 1.105.402l2.402 7.206a.75.75 0 0 0 1.104.401l1.445-.889m-8.25.75.213.09a1.687 1.687 0 0 0 2.062-.617l4.45-6.676a1.688 1.688 0 0 1 2.062-.618l.213.09" />
+        }
       }
     </svg>
   `,
 })
 export class IconComponent {
-  @Input({ required: true }) name: TIconName = '';
-  @Input() size: TSize = 'sm';
+  @Input({ required: true }) props!: TIconProps;
 }
