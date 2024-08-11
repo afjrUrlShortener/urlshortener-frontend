@@ -1,39 +1,44 @@
 import { Component, Input, output } from '@angular/core';
-import { IconComponent } from '../icon/icon.component';
-import { TIconName } from '../../types/common.type';
+import { IconComponent, TIconProps } from '../icon/icon.component';
+import {
+  TTypographyProps,
+  TypographyComponent,
+} from '../typography/typography.component';
+import { TColor } from '../../types/common.type';
+import { NgClass } from '@angular/common';
+
+export type TButtonProps = {
+  typography?: TTypographyProps;
+  icon?: TIconProps;
+  bgColor?: TColor;
+};
 
 @Component({
   selector: 'app-button',
   standalone: true,
-  imports: [IconComponent],
+  imports: [IconComponent, TypographyComponent, NgClass],
   template: `
     <button
       type="button"
-      class="group flex items-center justify-evenly rounded bg-tertiary px-2 py-2 transition-all duration-300 hover:bg-secondary"
+      class="flex items-center justify-evenly rounded px-2 py-2 transition-colors duration-300"
+      [ngClass]="{
+        'bg-primary': props.bgColor === 'primary',
+        'bg-secondary': props.bgColor === 'secondary' || !props.bgColor,
+        'bg-tertiary': props.bgColor === 'tertiary',
+      }"
       (click)="onClick.emit()">
-      @if (text && iconName) {
-        <span class="font-bold text-secondary group-hover:text-primary">
-          {{ text }}
-        </span>
-        <app-icon
-          class="ml-2 stroke-secondary group-hover:stroke-primary"
-          [name]="iconName" />
-
-      } @else if (text) {
-        <span class="font-bold text-secondary group-hover:text-primary">
-          {{ text }}
-        </span>
-
-      } @else if (iconName) {
-        <app-icon
-          class="stroke-secondary group-hover:stroke-primary"
-          [name]="iconName" />
+      @if (props.typography && props.icon) {
+        <app-typography [props]="props.typography" />
+        <app-icon class="ml-2" [props]="props.icon" />
+      } @else if (props.typography) {
+        <app-typography [props]="props.typography" />
+      } @else if (props.icon) {
+        <app-icon [props]="props.icon" />
       }
     </button>
   `,
 })
 export class ButtonComponent {
-  @Input() text?: string;
-  @Input() iconName?: TIconName;
+  @Input({ required: true }) props!: TButtonProps;
   onClick = output();
 }
