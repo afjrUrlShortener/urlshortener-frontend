@@ -1,14 +1,23 @@
 import { Routes } from '@angular/router';
-import { PageNotFoundComponent } from './pages/page-not-found/page-not-found.component';
 import { HomeComponent } from './pages/home/home.component';
-import { homeRoutes } from './pages/home/home.routes';
+import { logger } from './utils/logger.utils';
 
 export const routes: Routes = [
   {
     path: '',
     title: 'Home',
     component: HomeComponent,
-    children: homeRoutes,
+    loadChildren: () =>
+      import('./pages/home/home.routes')
+        .then(x => x.homeRoutes)
+        .finally(() => logger.debug('loaded home')),
   },
-  { path: '**', title: '404', component: PageNotFoundComponent },
+  {
+    path: '**',
+    title: '404',
+    loadComponent: () =>
+      import('./pages/page-not-found/page-not-found.component')
+        .then(x => x.PageNotFoundComponent)
+        .finally(() => logger.debug('loaded page not found')),
+  },
 ];
