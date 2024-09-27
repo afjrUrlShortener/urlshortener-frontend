@@ -26,7 +26,7 @@ export type TButtonProps = {
         'bg-secondary': props.bgColor === 'secondary' || !props.bgColor,
         'bg-tertiary': props.bgColor === 'tertiary',
       }"
-      (click)="onClick.emit()">
+      (click)="click.emit()">
       @if (props.typography && props.icon) {
         <app-typography [props]="props.typography" />
         <app-icon class="ml-2" [props]="props.icon" />
@@ -40,5 +40,5 @@ export type TButtonProps = {
 })
 export class ButtonComponent {
   @Input({ required: true }) props!: TButtonProps;
-  onClick = output();
+  click = output();
 }
