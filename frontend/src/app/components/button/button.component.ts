@@ -26,6 +26,8 @@ export type TButtonProps = {
         'bg-secondary': props.bgColor === 'secondary' || !props.bgColor,
         'bg-tertiary': props.bgColor === 'tertiary',
       }"
+      (mouseenter)="mouseenter.emit(props)"
+      (mouseleave)="mouseleave.emit(props)"
       (click)="click.emit()">
       @if (props.typography && props.icon) {
         <app-typography [props]="props.typography" />
@@ -40,5 +42,7 @@ export type TButtonProps = {
 })
 export class ButtonComponent {
   @Input({ required: true }) props!: TButtonProps;
+  mouseenter = output<TButtonProps>();
+  mouseleave = output<TButtonProps>();
   click = output();
 }
