@@ -3,8 +3,11 @@ module.exports = {
   content: ['./src/**/*.{html,ts}'],
   theme: {
     extend: {
+      transitionProperty: {
+        width: 'width',
+      },
       colors: {
-        primary: '#DCD6F7',
+        primary: '#FFFFFF',
         secondary: '#384078',
         tertiary: '#A6B1E1',
         success: '#387855',
